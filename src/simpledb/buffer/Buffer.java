@@ -19,6 +19,7 @@ public class Buffer {
    private int pins = 0;
    private int modifiedBy = -1;  // negative means not modified
    private int logSequenceNumber = -1; // negative means no corresponding simpledb.log simpledb.record
+   private long latestUsage = 0;
 
    /**
     * Creates a new simpledb.buffer, wrapping a new
@@ -187,4 +188,13 @@ public class Buffer {
       blk = contents.append(filename);
       pins = 0;
    }
+
+   long getLatestUsage() {
+      return this.latestUsage;
+   }
+
+   void setLatestUsage(long latestUsage) {
+      this.latestUsage = latestUsage;
+   }
+
 }

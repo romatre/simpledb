@@ -5,6 +5,7 @@ import static java.sql.Types.INTEGER;
 import simpledb.file.Page;
 import simpledb.buffer.PageFormatter;
 import simpledb.record.TableInfo;
+import simpledb.server.SimpleDB;
 
 /**
  * An object that can format a page to look like an
@@ -39,7 +40,7 @@ public class BTPageFormatter implements PageFormatter {
       page.setInt(0, flag);
       page.setInt(INT_SIZE, 0);  // #records = 0
       int recsize = ti.recordLength();
-      for (int pos=2*INT_SIZE; pos+recsize<=BLOCK_SIZE; pos += recsize)
+      for (int pos = 2*INT_SIZE; pos+recsize<= SimpleDB.BLOCK_SIZE; pos += recsize)
          makeDefaultRecord(page, pos);
    }
    

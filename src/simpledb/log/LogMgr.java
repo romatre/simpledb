@@ -86,7 +86,7 @@ public class LogMgr implements Iterable<BasicLogRecord> {
       int recsize = INT_SIZE;  // 4 bytes for the integer that points to the previous simpledb.log simpledb.record
       for (Object obj : rec)
          recsize += size(obj);
-      if (currentpos + recsize >= BLOCK_SIZE){ // the simpledb.log simpledb.record doesn't fit,
+      if (currentpos + recsize >= SimpleDB.BLOCK_SIZE){ // the simpledb.log simpledb.record doesn't fit,
          flush();        // so move to the next block.
          appendNewBlock();
       }

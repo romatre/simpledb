@@ -2,6 +2,7 @@ package simpledb.record;
 
 import static simpledb.file.Page.*;
 import simpledb.file.Block;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 /**
@@ -146,7 +147,7 @@ public class RecordPage {
    }
    
    private boolean isValidSlot() {
-      return currentpos() + slotsize <= BLOCK_SIZE;
+      return currentpos() + slotsize <= SimpleDB.BLOCK_SIZE;
    }
    
    private boolean searchFor(int flag) {

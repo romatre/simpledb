@@ -36,14 +36,7 @@ import java.nio.charset.Charset;
  * @author Edward Sciore
  */
 public class Page {
-   /**
-    * The number of bytes in a block.
-    * This value is set unreasonably low, so that it is easier
-    * to create and test databases having a lot of blocks.
-    * A more realistic value would be 4K.
-    */
-   public static final int BLOCK_SIZE = 400;
-   
+
    /**
     * The size of an integer in bytes.
     * This value is almost certainly 4, but it is
@@ -66,7 +59,7 @@ public class Page {
       return INT_SIZE + (n * (int)bytesPerChar);
    }
    
-   private ByteBuffer contents = ByteBuffer.allocateDirect(BLOCK_SIZE);
+   private ByteBuffer contents = ByteBuffer.allocateDirect(SimpleDB.BLOCK_SIZE);
    private FileMgr filemgr = SimpleDB.fileMgr();
    
    /**

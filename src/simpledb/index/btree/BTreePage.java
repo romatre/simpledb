@@ -5,6 +5,7 @@ import static simpledb.file.Page.*;
 import simpledb.file.Block;
 import simpledb.record.*;
 import simpledb.query.*;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 /**
@@ -62,7 +63,7 @@ public class BTreePage {
     * @return true if the block is full
     */
    public boolean isFull() {
-      return slotpos(getNumRecs()+1) >= BLOCK_SIZE;
+      return slotpos(getNumRecs()+1) >= SimpleDB.BLOCK_SIZE;
    }
    
    /**

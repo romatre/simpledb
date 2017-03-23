@@ -5,6 +5,7 @@ import static simpledb.file.Page.*;
 import static simpledb.record.RecordPage.EMPTY;
 import simpledb.file.Page;
 import simpledb.buffer.PageFormatter;
+import simpledb.server.SimpleDB;
 
 /**
  * An object that can format a page to look like a block of 
@@ -32,7 +33,7 @@ class RecordFormatter implements PageFormatter {
     */
    public void format(Page page) {
       int recsize = ti.recordLength() + INT_SIZE;
-      for (int pos=0; pos+recsize<=BLOCK_SIZE; pos += recsize) {
+      for (int pos = 0; pos+recsize<= SimpleDB.BLOCK_SIZE; pos += recsize) {
          page.setInt(pos, EMPTY);
          makeDefaultRecord(page, pos);
       }

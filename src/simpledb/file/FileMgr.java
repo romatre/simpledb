@@ -1,6 +1,12 @@
 package simpledb.file;
 
-import static simpledb.file.Page.BLOCK_SIZE;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import simpledb.server.SimpleDB;
+import simpledb.stats.BasicFileStats;
+
+import static simpledb.server.SimpleDB.BLOCK_SIZE;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -25,6 +31,45 @@ public class FileMgr {
    private File dbDirectory;
    private boolean isNew;
    private Map<String,FileChannel> openFiles = new HashMap<String,FileChannel>();
+   private Map<String, BasicFileStats> blockStatsFile = new HashMap<String, BasicFileStats>();
+
+   private void updateReadBlockStats(Block blk, ByteBuffer bb) {
+      this.getMapStats().get(blk.fileName()).incrementBlockRead();
+   }
+
+   private void updateWriteBlockStats(Block blk, ByteBuffer bb) {
+      this.getMapStats().get(blk.fileName()).incrementBlockWritten();
+   }
+
+   public final Map<String,BasicFileStats> getMapStats() {
+      return this.blockStatsFile;
+   }
+
+   public static JSONObject getBlockStat(String fileName, BasicFileStats fileStats) throws JSONException {
+      JSONObject blockStat = new JSONObject();
+      blockStat.put("fileName", fileName);
+      blockStat.put("readBlocks", fileStats.getBlockRead());
+      blockStat.put("writtenBlocks", fileStats.getBlockWritten());
+      return blockStat;
+   }
+
+   public static JSONArray getAllBlockStats() {
+      JSONArray blockStats = new JSONArray();
+      SimpleDB.fileMgr()
+         .getMapStats()
+         .forEach((fileName, fileStats) -> {
+            try {
+               blockStats.put(getBlockStat(fileName, fileStats));
+            } catch (JSONException e) {
+            e.printStackTrace();
+            }
+         });
+      return blockStats;
+   }
+
+   public final void resetMapStats() {
+      this.blockStatsFile = new HashMap<String, BasicFileStats>();
+   }
 
    /**
     * Creates a simpledb.file manager for the specified database.
@@ -59,6 +104,7 @@ public class FileMgr {
       try {
          bb.clear();
          FileChannel fc = getFile(blk.fileName());
+         this.updateReadBlockStats(blk, bb);
          fc.read(bb, blk.number() * BLOCK_SIZE);
       }
       catch (IOException e) {
@@ -75,6 +121,7 @@ public class FileMgr {
       try {
          bb.rewind();
          FileChannel fc = getFile(blk.fileName());
+         this.updateWriteBlockStats(blk, bb);
          fc.write(bb, blk.number() * BLOCK_SIZE);
       }
       catch (IOException e) {
@@ -131,6 +178,9 @@ public class FileMgr {
     */
    private FileChannel getFile(String filename) throws IOException {
       FileChannel fc = openFiles.get(filename);
+      if (!this.blockStatsFile.containsKey(filename)) {
+         this.blockStatsFile.put(filename, new BasicFileStats());
+      }
       if (fc == null) {
          File dbTable = new File(dbDirectory, filename);
          RandomAccessFile f = new RandomAccessFile(dbTable, "rws");

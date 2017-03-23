@@ -21,9 +21,18 @@ import simpledb.planner.*;
  * @author Edward Sciore
  */
 public class SimpleDB {
+
+   /**
+    * The number of bytes in a block.
+    * This value is set unreasonably low, so that it is easier
+    * to create and test databases having a lot of blocks.
+    * A more realistic value would be 4K.
+    */
+   public static int BLOCK_SIZE = 400;
    public static int BUFFER_SIZE = 8;
    public static String LOG_FILE = "simpledb.simpledb.log";
-   
+   public static String STRATEGY = "naif";
+
    private static FileMgr     fm;
    private static BufferMgr   bm;
    private static LogMgr      logm;
@@ -46,6 +55,13 @@ public class SimpleDB {
       }
       initMetadataMgr(isnew, tx);
       tx.commit();
+   }
+
+   public static void init(String dirname, String strategy, int blockSize, int bufferSize) {
+      BLOCK_SIZE = blockSize;
+      BUFFER_SIZE = bufferSize;
+      STRATEGY = strategy;
+      init(dirname);
    }
    
    // The following initialization methods are useful for 

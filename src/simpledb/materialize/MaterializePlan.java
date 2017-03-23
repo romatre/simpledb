@@ -1,6 +1,6 @@
 package simpledb.materialize;
 
-import static simpledb.file.Page.BLOCK_SIZE;
+import static simpledb.server.SimpleDB.BLOCK_SIZE;
 import simpledb.tx.Transaction;
 import simpledb.record.*;
 import simpledb.query.*;

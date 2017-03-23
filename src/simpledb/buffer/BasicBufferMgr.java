@@ -1,6 +1,7 @@
 package simpledb.buffer;
 
 import simpledb.file.*;
+import simpledb.server.SimpleDB;
 
 /**
  * Manages the pinning and unpinning of buffers to blocks.
@@ -10,7 +11,8 @@ import simpledb.file.*;
 class BasicBufferMgr {
    private Buffer[] bufferpool;
    private int numAvailable;
-   
+   private int latestPinned;
+
    /**
     * Creates a simpledb.buffer manager having the specified number
     * of simpledb.buffer slots.
@@ -111,9 +113,60 @@ class BasicBufferMgr {
    }
    
    private Buffer chooseUnpinnedBuffer() {
-      for (Buffer buff : bufferpool)
-         if (!buff.isPinned())
-         return buff;
+      switch (SimpleDB.STRATEGY) {
+         case "naif":
+            return chooseUnpinnedBufferNaif();
+         case "clock":
+            return chooseUnpinnedBufferClock();
+         case "lru":
+            return chooseUnpinnedBufferLRU();
+      }
       return null;
    }
+
+   private Buffer chooseUnpinnedBufferNaif() {
+      for (Buffer buff : bufferpool)
+         if (!buff.isPinned())
+            return buff;
+      return null;
+   }
+
+   private Buffer chooseUnpinnedBufferClock() {
+      int length = bufferpool.length;
+      for(int i = latestPinned; i < length; i++) {
+         if (!bufferpool[i].isPinned()) {
+            this.latestPinned = i;
+            return bufferpool[i];
+         }
+      }
+      for(int i = 0; i < latestPinned; i++) {
+         if (!bufferpool[i].isPinned()) {
+            this.latestPinned = i;
+            return bufferpool[i];
+         }
+      }
+      return null;
+   }
+
+   private Buffer chooseUnpinnedBufferLRU() {
+      Buffer buffer = null;
+
+      for (int i = 0; i < bufferpool.length; i++) {
+         if (!bufferpool[i].isPinned()) {
+            buffer = bufferpool[i];
+            break;
+         }
+      }
+
+      for(int i = 0; i < bufferpool.length; i++) {
+         if(!bufferpool[i].isPinned() && bufferpool[i].getLatestUsage() < buffer.getLatestUsage()) {
+            buffer = bufferpool[i];
+         }
+      }
+
+      buffer.setLatestUsage(System.currentTimeMillis());
+
+      return buffer;
+   }
+
 }
