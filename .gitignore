@@ -1,0 +1,15 @@
+# IntelliJ files to ignore
+.idea/workspace.xml
+.idea/tasks.xml
+*.iml
+*.iws
+
+# *nix, macos
+.DS_Store
+
+# build
+target
+
+# gradle
+gradlew.bat
+.gradle
