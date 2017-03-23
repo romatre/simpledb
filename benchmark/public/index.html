@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    </head>
+
+    <body>
+
+    <div id="myDiv" style="width: 100%; height: 100vh;"></div>
+    <script>
+        $(document).ready(() => {
+            $.getJSON( "http://localhost:3000/data", data => {
+                var layout = {barmode: 'group'};
+                Plotly.newPlot('myDiv', data, layout, {
+                    staticPlot: true,
+                });
+            });
+        });
+    </script>
+    </body>
+</html>
