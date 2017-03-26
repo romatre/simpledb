@@ -19,15 +19,14 @@ public class TestBenchmark {
     public static void main(String args[]) throws Exception {
 
         generateStats("Naif, BufferSize: 8", "studentDB", "naif", 400, 8);
-        generateStats("Clock, BufferSize: 8", "studentDB", "clock", 400, 8);
         generateStats("LRU, BufferSize: 8", "studentDB", "lru", 400, 8);
+        generateStats("Clock, BufferSize: 8", "studentDB", "clock", 400, 8);
 
-        generateStats("Naif, BufferSize: 2000", "studentDB", "naif", 400, 2000);
-        generateStats("Clock, BufferSize: 2000", "studentDB", "clock", 400, 2000);
         generateStats("LRU, BufferSize: 2000", "studentDB", "lru", 400, 2000);
+        generateStats("Clock, BufferSize: 2000", "studentDB", "clock", 400, 2000);
 
-        generateStats("Clock, BufferSize: 20000", "studentDB", "clock", 400, 20000);
         generateStats("LRU, BufferSize: 20000", "studentDB", "lru", 400, 20000);
+        generateStats("Clock, BufferSize: 20000", "studentDB", "clock", 400, 20000);
 
         PrintWriter writer = new PrintWriter("benchmark/data.json", "UTF-8");
         writer.println(allStats);
